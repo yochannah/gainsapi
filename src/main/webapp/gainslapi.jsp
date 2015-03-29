@@ -14,38 +14,41 @@
 
 <html>
 <head>
+    <title>GAINSL: Reports</title>
     <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" href="/css/style.css"/>
     <link rel="shortcut icon" href="http://faviconist.com/icons/2e4ff8c8a427d0559f763ceb86572c0c/favicon.ico" />
 </head>
 
 <body>
-
-<%
-    String orgName = request.getParameter("orgName");
-    if (orgName == null) {
-        orgName = "default";
-    }
-    pageContext.setAttribute("orgName", orgName);
-    UserService userService = UserServiceFactory.getUserService();
-    User user = userService.getCurrentUser();
-    if (user != null) {
-        pageContext.setAttribute("user", user);
-%>
-
-<p>Hello, ${fn:escapeXml(user.nickname)}! (You can
-    <a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">sign out</a>.)</p>
-<%
-} else {
-%>
-<p>Hello!
-    <a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Sign in</a>
-    to include your name with reports you post.</p>
-<%
-    }
-%>
-
-
+<header>
+    <div id="greeting"> 
+    <%
+        String orgName = request.getParameter("orgName");
+        if (orgName == null) {
+            orgName = "default";
+        }
+        pageContext.setAttribute("orgName", orgName);
+        UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+        if (user != null) {
+            pageContext.setAttribute("user", user);
+    %>
+        <p>Hello, ${fn:escapeXml(user.nickname)}! (You can
+            <a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">sign out</a>.)</p>
+        <%
+        } else {
+        %>
+        <p>Hello!
+            <a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Sign in</a>
+            to include your name with reports you post.</p>
+        <%
+            }
+        %>
+        </p>
+    </div>
+</header>
+<main>
 <%
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Key reportStoreKey = KeyFactory.createKey("gainsl", orgName);
@@ -82,17 +85,20 @@
         }
     }
 %>
+<div id="postNewReport">
+    <form action="/report" method="post">
+        <div><textarea name="content" rows="3" cols="60"></textarea></div>
+        <div><input type="submit" value="Post report"/></div>
+        <input type="hidden" name="orgName" value="${fn:escapeXml(orgName)}"/>
+    </form>
+</div>
 
-<form action="/report" method="post">
-    <div><textarea name="content" rows="3" cols="60"></textarea></div>
-    <div><input type="submit" value="Post report"/></div>
-    <input type="hidden" name="orgName" value="${fn:escapeXml(orgName)}"/>
-</form>
-
-<form action="/gainslapi.jsp" method="get">
-    <div><input type="text" name="orgName" value="${fn:escapeXml(orgName)}"/></div>
-    <div><input type="submit" value="Switch Org"/></div>
-</form>
-
+<div id="switchOrg">
+    <form action="/gainslapi.jsp" method="get">
+        <div><input type="text" name="orgName" value="${fn:escapeXml(orgName)}"/></div>
+        <div><input type="submit" value="Switch Org"/></div>
+    </form>
+</div>
+</main>
 </body>
 </html>

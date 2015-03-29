@@ -1,3 +1,26 @@
 body {
-    font-family:Raleway
+    font-family:Raleway;
+    margin:0;
+}
+
+main div, main > p {
+   padding:1em;
+}
+
+#greeting {
+   color:#fff;
+   background-color:#333;
+   text-align:right;
+   height:2em;
+   padding:0.05em 1em 1em 0em;
+}
+
+#greeting a {
+  color:#ddd;
+  font-weight:bold;
+}
+
+
+#switchOrg {
+   display:none;
 }
