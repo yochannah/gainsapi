@@ -1,17 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app PUBLIC
+ "-//Oracle Corporation//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
     <servlet>
-        <servlet-name>SystemServiceServlet</servlet-name>
-        <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
-        <init-param>
-            <param-name>services</param-name>
-            <param-value>com.digitalcranberry.gainslapi.YourFirstAPI</param-value>
-        </init-param>
+        <servlet-name>gainslapi</servlet-name>
+        <servlet-class>com.digitalcranberry.gainslapi.GainslAPI</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>report</servlet-name>
+        <servlet-class>com.digitalcranberry.gainslapi.StoreReport</servlet-class>
+    </servlet>    
     <servlet-mapping>
-        <servlet-name>SystemServiceServlet</servlet-name>
-        <url-pattern>/_ah/spi/*</url-pattern>
+        <servlet-name>gainslapi</servlet-name>
+        <url-pattern>/gainslapi</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>report</servlet-name>
+        <url-pattern>/report</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>gainslapi.jsp</welcome-file>
     </welcome-file-list>
 </web-app>
