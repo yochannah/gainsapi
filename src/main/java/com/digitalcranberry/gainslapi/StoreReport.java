@@ -34,6 +34,7 @@ public class StoreReport extends HttpServlet {
     }
     report.setProperty("date", date);
     report.setProperty("content", content);
+    report.setProperty("status", "new");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(report);

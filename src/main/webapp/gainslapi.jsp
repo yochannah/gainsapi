@@ -26,7 +26,7 @@
     <%
         String orgName = request.getParameter("orgName");
         if (orgName == null) {
-            orgName = "default";
+            orgName = "Open University";
         }
         pageContext.setAttribute("orgName", orgName);
         UserService userService = UserServiceFactory.getUserService();
