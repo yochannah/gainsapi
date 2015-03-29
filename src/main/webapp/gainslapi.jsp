@@ -14,8 +14,9 @@
 
 <html>
 <head>
-<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <link rel="shortcut icon" href="http://faviconist.com/icons/2e4ff8c8a427d0559f763ceb86572c0c/favicon.ico" />
 </head>
 
 <body>
