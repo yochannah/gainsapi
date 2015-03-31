@@ -24,14 +24,32 @@
 <html>
 
 <body>
+
+<form>
+OrgName: <input type="text" id="orgName" value="Open University"><br>
+Lat: <input type="text" id="latitude" value="51.123123"><br>
+Long: <input type="text" id="longitude" value="12.1223234"><br>
+Content: <input type="text" id="content"><br>
+<button id="submit" type="button">Make a report!</button>
+</form>
+
 <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
 <script>
-$('document').ready(function () { 
+
+$('#submit').click(function(e) {
+    var content = $('#content').val(),
+    lat = $('#latitude').val(),
+    long = $('#longitude').val();
     $.ajax({
-    type:"POST",
-    data:{"orgName" : "bob", "content" : "Yet another test", "latitude" : "51.123123", "longitude" : "12.1223234"},
-    url:"http://localhost:8888/report"
+        type:"POST",
+        data:{"orgName" : "bob", "content" : content, "latitude" : lat, "longitude" : long},
+        url:"http://localhost:8888/report"
     });
+    
+    e.preventDefault();
+});
+
+$('document').ready(function () { 
 });    
 </script>
 </body>
