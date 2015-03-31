@@ -24,6 +24,7 @@ public class StoreReport extends HttpServlet {
     User user = userService.getCurrentUser();
 
     String orgName = req.getParameter("orgName");
+    System.out.println(orgName);
     Key reportStoreKey = KeyFactory.createKey("gainsl", orgName);
     String content = req.getParameter("content");
     Date date = new Date();
