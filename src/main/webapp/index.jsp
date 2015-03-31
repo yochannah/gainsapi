@@ -29,8 +29,8 @@
 $('document').ready(function () { 
     $.ajax({
     type:"POST",
-    data:{"orgName" : "bob", "content" : "glurble"},
-    url:"http://localhost:8888/report",
+    data:{"orgName" : "bob", "content" : "Yet another test", "latitude" : "51.123123", "longitude" : "12.1223234"},
+    url:"http://localhost:8888/report"
     });
 });    
 </script>

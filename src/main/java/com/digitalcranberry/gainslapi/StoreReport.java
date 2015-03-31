@@ -11,6 +11,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +24,18 @@ public class StoreReport extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
 
+    final Logger log = Logger.getLogger(StoreReport.class.getName());
+    log.info("Loggiedoos: " + req.getParameter("content"));
+
     String orgName = req.getParameter("orgName");
-    System.out.println(orgName);
+    Double latitude = Double.parseDouble(req.getParameter("latitude"));
+    Double longitude = Double.parseDouble(req.getParameter("longitude"));
+    
+    
     Key reportStoreKey = KeyFactory.createKey("gainsl", orgName);
     String content = req.getParameter("content");
     Date date = new Date();
+    
     Entity report = new Entity("Report", reportStoreKey);
     if (user != null) {
       report.setProperty("author_id", user.getUserId());
@@ -36,6 +44,8 @@ public class StoreReport extends HttpServlet {
     report.setProperty("date", date);
     report.setProperty("content", content);
     report.setProperty("status", "new");
+    report.setProperty("latitude", latitude);
+    report.setProperty("longitude", longitude);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(report);
