@@ -10,6 +10,12 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+
+<%
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <html>
@@ -25,7 +31,14 @@
 
 <body>
 
-<form>
+<form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data" id="imageForm">
+    <input type="text" name="foo">
+    <input type="file" name="myFile">
+    <input type="submit" value="Submit">
+</form>
+
+
+<form id="reportForm">
 OrgName: <input type="text" id="orgName" value="Open University"><br>
 Lat: <input type="text" id="latitude" value="51.123123"><br>
 Long: <input type="text" id="longitude" value="12.1223234"><br>

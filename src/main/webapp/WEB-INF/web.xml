@@ -12,6 +12,27 @@
         <servlet-name>report</servlet-name>
         <servlet-class>com.digitalcranberry.gainslapi.StoreReport</servlet-class>
     </servlet>    
+    
+<servlet>
+    <servlet-name>Upload</servlet-name>
+    <servlet-class>com.digitalcranberry.gainslapi.Upload</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>Serve</servlet-name>
+    <servlet-class>com.digitalcranberry.gainslapi.Serve</servlet-class>
+  </servlet>
+ 
+  <servlet-mapping>
+    <servlet-name>Upload</servlet-name>
+    <url-pattern>/upload</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>Serve</servlet-name>
+    <url-pattern>/serve</url-pattern>
+  </servlet-mapping>    
+    
     <servlet-mapping>
         <servlet-name>gainslapi</servlet-name>
         <url-pattern>/gainslapi</url-pattern>
@@ -23,4 +44,5 @@
     <welcome-file-list>
         <welcome-file>gainslapi.jsp</welcome-file>
     </welcome-file-list>
+    
 </web-app>

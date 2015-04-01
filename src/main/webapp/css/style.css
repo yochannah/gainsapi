@@ -24,3 +24,8 @@ main div, main > p {
 #switchOrg {
    display:none;
 }
+
+form {
+    border:solid #666 dotted;
+    border-radius: 5px;
+}
