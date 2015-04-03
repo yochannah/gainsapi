@@ -10,12 +10,16 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 
 public class StoreReport extends HttpServlet {
   @Override
@@ -25,28 +29,49 @@ public class StoreReport extends HttpServlet {
     User user = userService.getCurrentUser();
 
     final Logger log = Logger.getLogger(StoreReport.class.getName());
-    log.info("Loggiedoos: " + req.getParameter("content"));
 
-    String orgName = req.getParameter("orgName");
-    Double latitude = Double.parseDouble(req.getParameter("latitude"));
-    Double longitude = Double.parseDouble(req.getParameter("longitude"));
+/*
+    InputStream body = req.getInputStream();
+    StringWriter writer = new StringWriter();
+    String encoding = "UTF-8";    
+	IOUtils.copy(body, writer, encoding);
+    String theString = writer.toString();
+    log.info("Body: " + theString);*/
     
+    String orgName = req.getParameter("orgName");
+    
+    if(orgName == null) {
+    	orgName = "OU";
+    }
+    
+    log.info(orgName);
+    
+//    Double latitude = Double.parseDouble(req.getParameter("latitude"));
+//    Double longitude = Double.parseDouble(req.getParameter("longitude"));
+    String latitude = req.getParameter("latitude");
+    String longitude = req.getParameter("longitude");
+    String content = req.getParameter("content");
+
+    
+    
+    Date date = new Date();
+
     
     Key reportStoreKey = KeyFactory.createKey("gainsl", orgName);
-    String content = req.getParameter("content");
-    Date date = new Date();
     
     Entity report = new Entity("Report", reportStoreKey);
     if (user != null) {
       report.setProperty("author_id", user.getUserId());
       report.setProperty("author_email", user.getEmail());
     }
-    report.setProperty("date", date);
-    report.setProperty("content", content);
-    report.setProperty("status", "new");
+    
     report.setProperty("latitude", latitude);
     report.setProperty("longitude", longitude);
-
+    report.setProperty("content", content);
+   
+    report.setProperty("date", date);
+    report.setProperty("status", "new");
+    
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(report);
 

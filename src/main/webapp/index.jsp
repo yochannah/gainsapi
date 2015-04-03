@@ -52,11 +52,12 @@ Content: <input type="text" id="content"><br>
 $('#submit').click(function(e) {
     var content = $('#content').val(),
     lat = $('#latitude').val(),
+    orgName = $('#orgName').val(),
     long = $('#longitude').val();
     $.ajax({
         type:"POST",
-        data:{"orgName" : "bob", "content" : content, "latitude" : lat, "longitude" : long},
-        url:"http://localhost:8888/report"
+        data:{"orgName" : orgName, "content" : content, "latitude" : lat, "longitude" : long},
+        url:"http://192.168.1.86:8888/report"
     });
     
     e.preventDefault();
