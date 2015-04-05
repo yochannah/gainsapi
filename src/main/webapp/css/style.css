@@ -29,3 +29,5 @@ form {
     border:solid #666 dotted;
     border-radius: 5px;
 }
+
+#map { height: 180px; }

@@ -12,6 +12,10 @@
         <servlet-name>report</servlet-name>
         <servlet-class>com.digitalcranberry.gainslapi.StoreReport</servlet-class>
     </servlet>    
+    <servlet>
+        <servlet-name>BlobUrl</servlet-name>
+        <servlet-class>com.digitalcranberry.gainslapi.BlobUrl</servlet-class>
+    </servlet>    
     
 <servlet>
     <servlet-name>Upload</servlet-name>
@@ -31,6 +35,11 @@
   <servlet-mapping>
     <servlet-name>Serve</servlet-name>
     <url-pattern>/serve</url-pattern>
+  </servlet-mapping>   
+   
+  <servlet-mapping>
+    <servlet-name>BlobUrl</servlet-name>
+    <url-pattern>/bloburl</url-pattern>
   </servlet-mapping>    
     
     <servlet-mapping>
