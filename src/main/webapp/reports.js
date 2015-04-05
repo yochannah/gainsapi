@@ -7,5 +7,12 @@ gainsl.reports = {
         }).done(function (data) {
             gainsl.reports.data = data;
         });
+    },
+    generateTable : function () {
+        var self = this, data = self.data, report;
+        for(var i = 0; i < data.length; i++) {
+            report = data[i];
+            console.log(report.propertyMap);
+        }
     }
 };

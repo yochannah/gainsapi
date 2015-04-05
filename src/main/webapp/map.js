@@ -1,6 +1,7 @@
 var gainsl = gainsl || {};
 
 gainsl.map = {
+    markers : [],
     init : function (aMap) {
         var self = this;
         this.theMap = L.map(aMap).setView([53.390829, -1.841100], 12);
@@ -12,5 +13,17 @@ gainsl.map = {
             mapId: 'yochannah.ll9ibof6',
             token: 'pk.eyJ1IjoieW9jaGFubmFoIiwiYSI6Iko5TU1xcW8ifQ.AlR1faR7rfR1CoJRyIPEAg'
         }).addTo(self.theMap);
+    },
+    addReports : function(reportsArray) {
+        var self = this, marker, report;
+        for (var i=0; i < reportsArray.length; i++) {
+            report = reportsArray[i].propertyMap;
+                //ensure only valid reports are shown. 
+                if(report.hasOwnProperty('latitude')) {
+                    marker = L.marker([report.longitude, report.latitude]).addTo(self.theMap);
+                    marker.bindPopup(report.content);
+                    self.markers.push(marker);
+                }
+        }
     }
 };

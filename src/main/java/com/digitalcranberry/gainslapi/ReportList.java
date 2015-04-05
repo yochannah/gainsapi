@@ -20,6 +20,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 
 
@@ -35,25 +36,26 @@ public class ReportList extends HttpServlet{
 		            throws IOException {
 
 		    	String orgName = req.getParameter("orgName");
+		    	String resultsNum = req.getParameter("resultNum");
+		    	int limit;
+		    	
+		    	if(resultsNum != null) {
+		    		limit = Integer.parseInt(resultsNum);
+		    	} else {
+		    		limit = 15;
+		    	}
+
 		    	
 		    	reportStoreKey = KeyFactory.createKey("gainsl", orgName);
 		        query = new Query("Report", reportStoreKey).addSort("date", Query.SortDirection.DESCENDING);		        
-		        reports  = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(15));
+		        reports  = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 
-		     /*  
-		        report.setProperty("latitude", latitude);
-		        report.setProperty("longitude", longitude);
-		        report.setProperty("content", content);
-		       
-		        report.setProperty("date", date);
-		        report.setProperty("status", "new");
-		       */ 
 		        Gson gson = new GsonBuilder()
 		        .setExclusionStrategies(new TestExclStrat())
 		        .create();
 		        
 		        String reportString = gson.toJson(reports); 
-
+		        
 		        resp.setStatus(HttpServletResponse.SC_OK);
 		        resp.setContentType("text/json");
 
