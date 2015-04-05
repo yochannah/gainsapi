@@ -26,6 +26,16 @@
     <servlet-name>Serve</servlet-name>
     <servlet-class>com.digitalcranberry.gainslapi.Serve</servlet-class>
   </servlet>
+  
+  <servlet>
+    <servlet-name>ReportList</servlet-name>
+    <servlet-class>com.digitalcranberry.gainslapi.ReportList</servlet-class>
+  </servlet>
+ 
+  <servlet-mapping>
+    <servlet-name>ReportList</servlet-name>
+    <url-pattern>/reportList</url-pattern>
+  </servlet-mapping>
  
   <servlet-mapping>
     <servlet-name>Upload</servlet-name>
@@ -46,6 +56,7 @@
         <servlet-name>gainslapi</servlet-name>
         <url-pattern>/gainslapi</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>report</servlet-name>
         <url-pattern>/report</url-pattern>
