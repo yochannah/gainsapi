@@ -18,6 +18,13 @@
     <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" href="/css/style.css"/>
     <link rel="shortcut icon" href="http://faviconist.com/icons/2e4ff8c8a427d0559f763ceb86572c0c/favicon.ico" />
+    
+    <script>
+    var gainsl = gainsl || {};
+    gainsl.reports = {
+    };
+    </script>
+    
 </head>
 
 <body>
@@ -67,6 +74,12 @@
         for (Entity report : reports) {
             pageContext.setAttribute("report_content",
                     report.getProperty("content"));
+            pageContext.setAttribute("report_lat",
+                    report.getProperty("latitude"));
+            pageContext.setAttribute("report_long",
+                    report.getProperty("longitude"));
+            pageContext.setAttribute("report_date",
+                    report.getProperty("date"));
             String author;
             if (report.getProperty("author_email") == null) {
                 author = "An anonymous person";
@@ -79,8 +92,9 @@
             }
             pageContext.setAttribute("report_user", author);
 %>
-<p><b>${fn:escapeXml(report_user)}</b> wrote:</p>
 <blockquote>${fn:escapeXml(report_content)}</blockquote>
+<p>(Location: ${fn:escapeXml(report_lat)}, ${fn:escapeXml(report_long)})</p>
+<p> - ${fn:escapeXml(report_date)}, by <b>${fn:escapeXml(report_user)}</b></p>
 <%
         }
     }
