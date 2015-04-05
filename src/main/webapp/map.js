@@ -15,15 +15,18 @@ gainsl.map = {
         }).addTo(self.theMap);
     },
     addReports : function(reportsArray) {
-        var self = this, marker, report;
+        var self = this, marker, report, mGroup;
         for (var i=0; i < reportsArray.length; i++) {
             report = reportsArray[i].propertyMap;
                 //ensure only valid reports are shown. 
                 if(report.hasOwnProperty('latitude')) {
-                    marker = L.marker([report.longitude, report.latitude]).addTo(self.theMap);
+                    marker = L.marker([report.latitude, report.longitude]).addTo(self.theMap);
                     marker.bindPopup(report.content);
                     self.markers.push(marker);
                 }
         }
+        //zoom to fit bounds
+        var mGroup = new L.featureGroup(self.markers);
+        self.theMap.fitBounds(mGroup.getBounds().pad(0.5));        
     }
 };
