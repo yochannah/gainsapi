@@ -44,7 +44,6 @@ public class ReportList extends HttpServlet{
 		    	} else {
 		    		limit = 15;
 		    	}
-
 		    	
 		    	reportStoreKey = KeyFactory.createKey("gainsl", orgName);
 		        query = new Query("Report", reportStoreKey).addSort("date", Query.SortDirection.DESCENDING);		        

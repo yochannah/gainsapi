@@ -1,0 +1,18 @@
+affba74: Sun, 5 Apr 2015 21:33:40 +0100, message: Basic dashboard page added
+46968f5: Sun, 5 Apr 2015 18:37:05 +0100, message: Generate map with markers from reports
+7f51929: Sun, 5 Apr 2015 17:19:34 +0100, message: added basic report get servelet
+13870f7: Sun, 5 Apr 2015 13:18:52 +0100, message: updated dashboard to list more report details
+7bedc8f: Sun, 5 Apr 2015 12:56:13 +0100, message: added basic mapping library and blob upload servelet
+c4619e2: Fri, 3 Apr 2015 17:59:54 +0100, message: Added debug code for the report receiver
+ff8427c: Wed, 1 Apr 2015 16:58:39 +0100, message: added image upload function
+09b7598: Tue, 31 Mar 2015 23:00:21 +0100, message: began image upload API, added desktop form for upload testing
+940e2af: Tue, 31 Mar 2015 22:39:18 +0100, message: Added logging and lat/long for geotagged reports
+9eb9d5d: Tue, 31 Mar 2015 20:18:51 +0100, message: successfully ajaxing (via web) reports in (sans location and pics, just text right now)
+ce05550: Tue, 31 Mar 2015 19:11:45 +0100, message: imported project to eclipse; added report model
+fc388ce: Sun, 29 Mar 2015 21:41:09 +0100, message: Now saves everything except the pic.
+0471e30: Sun, 29 Mar 2015 20:55:52 +0100, message: added minimal styling
+f5b5b4c: Sun, 29 Mar 2015 20:26:41 +0100, message: added favicon to prevent the server error log filling with 404s
+9fb5717: Sun, 29 Mar 2015 20:01:21 +0100, message: added basic Report creation webform and post method. Lacking all the required fields.
+50b2fda: Sun, 29 Mar 2015 20:00:47 +0100, message: added gitignore
+40fb4de: Fri, 13 Mar 2015 16:30:44 +0000, message: removed the target folder that I shouldn't have committed anyway
+f42c65d: Fri, 13 Mar 2015 16:29:15 +0000, message: initial commit

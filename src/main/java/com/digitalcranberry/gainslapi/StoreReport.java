@@ -29,14 +29,6 @@ public class StoreReport extends HttpServlet {
     User user = userService.getCurrentUser();
 
     final Logger log = Logger.getLogger(StoreReport.class.getName());
-
-/*
-    InputStream body = req.getInputStream();
-    StringWriter writer = new StringWriter();
-    String encoding = "UTF-8";    
-	IOUtils.copy(body, writer, encoding);
-    String theString = writer.toString();
-    log.info("Body: " + theString);*/
     
     String orgName = req.getParameter("orgName");
     
@@ -46,14 +38,10 @@ public class StoreReport extends HttpServlet {
     
     log.info(orgName);
     
-//    Double latitude = Double.parseDouble(req.getParameter("latitude"));
-//    Double longitude = Double.parseDouble(req.getParameter("longitude"));
     String latitude = req.getParameter("latitude");
     String longitude = req.getParameter("longitude");
     String content = req.getParameter("content");
 
-    
-    
     Date date = new Date();
 
     
@@ -75,6 +63,10 @@ public class StoreReport extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(report);
 
-    resp.sendRedirect("/gainslapi.jsp?orgName=" + orgName);
+    if(user != null) {
+    	resp.sendRedirect("/gainslapi.jsp?orgName=" + orgName);
+    } else {
+    	resp.sendRedirect("/reportList?orgName=" + orgName);
+    }
   }
 }
