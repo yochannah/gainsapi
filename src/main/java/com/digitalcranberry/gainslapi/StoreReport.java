@@ -38,6 +38,7 @@ public class StoreReport extends HttpServlet {
     
     log.info(orgName);
     
+    String reportid = req.getParameter("reportid");    
     String latitude = req.getParameter("latitude");
     String longitude = req.getParameter("longitude");
     String content = req.getParameter("content");
@@ -56,6 +57,7 @@ public class StoreReport extends HttpServlet {
     report.setProperty("latitude", latitude);
     report.setProperty("longitude", longitude);
     report.setProperty("content", content);
+    report.setProperty("reportid", reportid);
    
     report.setProperty("date", date);
     report.setProperty("status", "new");
