@@ -5,7 +5,7 @@ gainsl.reports = {
         var self = this;
         self.reportLocation = reportLocation;
         $.ajax({
-            url:"http://192.168.1.86:8888/reportList?orgName=Android"
+            url:"http://gainsl-offline.appspot.com/reportList?orgName=OU"
         }).done(function (data) {
             self.data = data;
             gainsl.map.addReports(gainsl.reports.data); 
