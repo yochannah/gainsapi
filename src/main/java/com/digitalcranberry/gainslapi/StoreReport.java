@@ -12,6 +12,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -30,23 +31,22 @@ public class StoreReport extends HttpServlet {
 
     final Logger log = Logger.getLogger(StoreReport.class.getName());
     
-    String orgName = req.getParameter("orgName");
-    
-    if(orgName == null) {
-    	orgName = "OU";
-    }
-    
-    log.info(orgName);
-    
-    String reportid = req.getParameter("reportid");    
-    String latitude = req.getParameter("latitude");
-    String longitude = req.getParameter("longitude");
-    String content = req.getParameter("content");
+    String orgName = 	propertyOrDefault(req, "orgName", "OU");
+    String status = 	propertyOrDefault(req, "status", "new");
+    String reportid = 	req.getParameter("reportid");    
+    String latitude = 	req.getParameter("latitude");
+    //String dc = 		req.getParameter("dc");
+    String longitude = 	req.getParameter("longitude");
+    String content = 	req.getParameter("content");
+    String dateCaptured = req.getParameter("dateCaptured");
 
-    Date date = new Date();
-
+    Date date = new Date();  
+    System.out.println("date captured: " + dateCaptured);
+    //log.info("dc: " + dc);
+    Date dateCreated = dateFromReport(dateCaptured);
+    Date dateReceived = new Date(); //we've received it now :) 
     
-    Key reportStoreKey = KeyFactory.createKey("gainsl", orgName);
+    Key reportStoreKey = KeyFactory.createKey("gainsl", reportid);
     
     Entity report = new Entity("Report", reportStoreKey);
     if (user != null) {
@@ -58,9 +58,9 @@ public class StoreReport extends HttpServlet {
     report.setProperty("longitude", longitude);
     report.setProperty("content", content);
     report.setProperty("reportid", reportid);
-   
+    report.setProperty("dateCreated", dateCreated);
     report.setProperty("date", date);
-    report.setProperty("status", "new");
+    report.setProperty("status", status);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(report);
@@ -70,5 +70,17 @@ public class StoreReport extends HttpServlet {
     } else {
     	resp.sendRedirect("/reportList?orgName=" + orgName);
     }
+  }
+  
+  private String propertyOrDefault(HttpServletRequest req, String propName, String defaultValue) {
+	  String value = req.getParameter(propName);
+	  if (value == null) {
+		  value = defaultValue;
+	  }
+	  return value;
+  }
+  
+  private Date dateFromReport(String dateString){
+	 return new Date(Long.parseLong(dateString)); 
   }
 }

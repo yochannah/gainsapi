@@ -5,11 +5,15 @@ import java.util.Date;
 public class Report {
 
 	    private String content;
-	    private Date date;
+	    private Date date;  //this field is indexed upon and changing its name makes the index fail
+	    					//consequently I don't use it. Sigh. 
+	    private Date dateCaptured;
+	    private Date dateReceived;
 	    private String status;
 	    private Double latitude;
 	    private Double longitude;
 	    private String image;
+	    private String reporter;
 	    
 	    public String getImage() {
 	        return image;
