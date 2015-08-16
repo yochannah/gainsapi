@@ -34,7 +34,7 @@ public class StoreReport extends HttpServlet {
     Entity newReport = setReportDetails(req);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         
-    Entity existingReport = checkForExisting(KeyFactory.stringToKey((String) newReport.getProperty("reportid")), datastore);
+    Entity existingReport = checkForExisting(newReport.getProperty("reportid"), datastore);
     if(existingReport == null) {
         //this is a new report, just add it to the store
     	datastore.put(newReport);
@@ -96,10 +96,11 @@ public class StoreReport extends HttpServlet {
    * Checks for report with this ID and returns it if it exists
    * Or null, otherwise.
    */
-  private Entity checkForExisting(Key reportId, DatastoreService datastore){
+  private Entity checkForExisting(String reportId, DatastoreService datastore){
 	  Entity report = null;
 	  try {
-			report = datastore.get(reportId);
+		  Key reportKey =  KeyFactory.stringToKey(reportId);
+		  report = datastore.get(reportKey);
 	  } catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
