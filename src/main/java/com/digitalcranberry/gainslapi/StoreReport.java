@@ -34,7 +34,7 @@ public class StoreReport extends HttpServlet {
     Entity newReport = setReportDetails(req);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         
-    Entity existingReport = checkForExisting(newReport.getProperty("reportid"), datastore);
+    Entity existingReport = checkForExisting((String) newReport.getProperty("reportid"), datastore);
     if(existingReport == null) {
         //this is a new report, just add it to the store
     	datastore.put(newReport);
