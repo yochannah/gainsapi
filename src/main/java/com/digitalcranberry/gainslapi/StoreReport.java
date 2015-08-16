@@ -42,7 +42,7 @@ public class StoreReport extends HttpServlet {
         //this is an update to a report. We need to check if it's appropriate to over-write.
 
     	Date existingLastUpdated = (Date) existingReport.getProperty("lastUpdated");
-      Date newLastUpdated = (Date) newReport.getProperty("lastUpdated");
+    	Date newLastUpdated = (Date) newReport.getProperty("lastUpdated");
     	if (existingLastUpdated.after(newLastUpdated)) {
     		//this means that a newer report arrived before
     		//the report we've just received, so we want to
@@ -63,8 +63,6 @@ public class StoreReport extends HttpServlet {
     	}
 
     }
-
-    datastore.put(newReport);
 
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
@@ -96,9 +94,11 @@ public class StoreReport extends HttpServlet {
    * Checks for report with this ID and returns it if it exists
    * Or null, otherwise.
    */
-  private Entity checkForExisting(Entity report, DatastoreService datastore){
+  private Entity checkForExisting(Entity newReport, DatastoreService datastore){
+	  Entity report = null;
 	  try {
-		  report = datastore.get(report.getKey());
+		  Key theKey = newReport.getKey();
+		  report = datastore.get(theKey);
 	  } catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
