@@ -33,11 +33,14 @@ public class StoreReport extends HttpServlet {
 
     Entity newReport = setReportDetails(req);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    
         
     Entity existingReport = checkForExisting(newReport, datastore);
     if(existingReport == null) {
         //this is a new report, just add it to the store
     	datastore.put(newReport);
+    	log.info("STORED KEY: " + KeyFactory.keyToString(newReport.getKey()));
+    	log.info("REPORT KEY: " + newReport.getProperty("reportid"));
     } else {
         //this is an update to a report. We need to check if it's appropriate to over-write.
 
@@ -97,7 +100,10 @@ public class StoreReport extends HttpServlet {
   private Entity checkForExisting(Entity newReport, DatastoreService datastore){
 	  Entity report = null;
 	  try {
-		  Key theKey = newReport.getKey();
+		  String reportid = (String) newReport.getProperty("reportid");
+		  final Logger log = Logger.getLogger(StoreReport.class.getName());    
+		  log.info(reportid);
+		  Key theKey = KeyFactory.createKey("gainsl", reportid);
 		  report = datastore.get(theKey);
 	  } catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -116,7 +122,10 @@ public class StoreReport extends HttpServlet {
     String latitude = 	req.getParameter("latitude");
     String longitude = 	req.getParameter("longitude");
     String content = 	req.getParameter("content");
-
+    
+    final Logger log = Logger.getLogger(StoreReport.class.getName());    
+    log.info(reportid);
+    
     String dateFirstCapturedStr = req.getParameter("dateFirstCaptured");
     String lastUpdateStr = req.getParameter("lastUpdated");
 
@@ -135,6 +144,7 @@ public class StoreReport extends HttpServlet {
     }
 
     report.setProperty("latitude", latitude);
+    report.setProperty("orgName", orgName);
     report.setProperty("longitude", longitude);
     report.setProperty("content", content);
     report.setProperty("reportid", reportid);
@@ -142,6 +152,9 @@ public class StoreReport extends HttpServlet {
     report.setProperty("lastUpdated", lastUpdated);
     report.setProperty("date", date);
     report.setProperty("status", status);
+    
+	log.info("REPORT KEY: " + report.getProperty("reportid"));    
+    
     return report;
   }
 
