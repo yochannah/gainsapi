@@ -182,8 +182,6 @@ public class Report {
 		    reportEntity.setProperty("date", date);
 		    reportEntity.setProperty("status", report.getStatus());
 		    
-			log.info("Entity key: " + KeyFactory.keyToString(reportEntity.getKey()));    
-		    
 		    return reportEntity;
 		  }
 		  
