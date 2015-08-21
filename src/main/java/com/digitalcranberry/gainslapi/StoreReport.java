@@ -39,8 +39,6 @@ public class StoreReport extends HttpServlet {
     if(existingReport == null) {
         //this is a new report, just add it to the store
     	datastore.put(newReport);
-    	log.info("STORED KEY: " + KeyFactory.keyToString(newReport.getKey()));
-    	log.info("REPORT KEY: " + newReport.getProperty("reportid"));
     } else {
         //this is an update to a report. We need to check if it's appropriate to over-write.
 
@@ -102,9 +100,11 @@ public class StoreReport extends HttpServlet {
 	  try {
 		  String reportid = (String) newReport.getProperty("reportid");
 		  final Logger log = Logger.getLogger(StoreReport.class.getName());    
-		  log.info(reportid);
+		  log.info("Checking for existing report. Our current ID is: \n" + reportid);
 		  Key theKey = KeyFactory.createKey("gainsl", reportid);
+		  log.info("Key: " + theKey);
 		  report = datastore.get(theKey);
+		  log.info("Report: " + report.toString());
 	  } catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
