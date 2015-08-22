@@ -1,11 +1,14 @@
 package com.digitalcranberry.gainslapi.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.digitalcranberry.gainslapi.StoreReport;
+import static com.digitalcranberry.gainslapi.Constants.*;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -133,7 +136,7 @@ public class Report {
 		  public Report(HttpServletRequest req) {
 			  
 			  this.setContent(req.getParameter("content"));
-			  this.setReportid(req.getParameter("reportid"));
+			  this.setReportid(req.getParameter(REPORT_ID));
 			  this.setLatitude(Double.parseDouble(req.getParameter("latitude")));
 			  this.setLongitude(Double.parseDouble(req.getParameter("longitude")));
 			  this.setOrgName(propertyOrDefault(req, "orgName", "OU"));
@@ -157,7 +160,7 @@ public class Report {
 			//set report ID to match the ID sent by the user.
 			Key reportStoreKey = KeyFactory.createKey("gainsl", report.getReportid());
 			    
-			Entity reportEntity = new Entity("Report", reportStoreKey);
+			Entity reportEntity = new Entity(REPORT_ENTITY, reportStoreKey);
 
 		    UserService userService = UserServiceFactory.getUserService();
 		    User user = userService.getCurrentUser();
@@ -182,6 +185,7 @@ public class Report {
 		    reportEntity.setProperty("lastUpdated", report.getLastUpdated());
 		    reportEntity.setProperty("date", date);
 		    reportEntity.setProperty("status", report.getStatus());
+		    reportEntity.setProperty("previousStates", new ArrayList<EmbeddedEntity>());
 		    
 		    return reportEntity;
 		  }

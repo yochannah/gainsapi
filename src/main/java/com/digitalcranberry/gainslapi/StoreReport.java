@@ -1,8 +1,10 @@
 package com.digitalcranberry.gainslapi;
 
 import com.digitalcranberry.gainslapi.model.Report;
+import static com.digitalcranberry.gainslapi.Constants.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -34,6 +37,9 @@ import org.apache.commons.io.IOUtils;
 
 
 public class StoreReport extends HttpServlet {
+	
+
+	
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws IOException {
@@ -54,8 +60,15 @@ public class StoreReport extends HttpServlet {
 
 
   
-  private void addPreviousState(Entity report) {
-	  
+  private void pushPreviousState(Entity existingEntity, EmbeddedEntity oldEntity) {
+	  ArrayList<EmbeddedEntity> previousStates;
+	  if (existingEntity.hasProperty(PREVIOUS_STATES)) {
+		  previousStates = (ArrayList<EmbeddedEntity>) existingEntity.getProperty(PREVIOUS_STATES);
+	  } else {
+		  previousStates = new ArrayList<EmbeddedEntity>();
+	  }
+	  previousStates.add(oldEntity);
+	  existingEntity.setProperty(PREVIOUS_STATES, previousStates);
   }
 
 
@@ -70,9 +83,11 @@ public class StoreReport extends HttpServlet {
 
 	  
 	  Entity existingReportEntity = checkForEntity(newReport);
+	  EmbeddedEntity oldState = new EmbeddedEntity();
 	  
 	  if(existingReportEntity != null) {
 	      //this is an update to a report. We need to check if it's appropriate to over-write.
+		  
 	      Date existingLastUpdated = (Date) existingReportEntity.getProperty("lastUpdated");
 	      Date newLastUpdated = (Date) newReport.getLastUpdated();
 	      if (existingLastUpdated.after(newLastUpdated)) {
@@ -89,13 +104,29 @@ public class StoreReport extends HttpServlet {
 	    	  //this means that the report we're just received is newer than the
 	    	  //current report state. We'll save the existing state in the previous state list
 	    	  //and then overwrite the existing state with the values we just received.
-	    	  log.info("We've received a report that is an update. Updating now.//TODO");
-	    	  //TODO: Push to report.previousStates;
+	    	  log.info("We've received a report that is an update. Updating report state now.");
+	    	  
+	    	  //create set previous state entity properties from current state.
+	    	  //this is a shallow value copy, not a reference to the existing entity
+	    	  oldState.setPropertiesFrom(existingReportEntity);
+	    	  
+	    	  //remove this property before we store it, because otherwise each 
+	    	  //consecutive update contains all previous states. This would be an exponential
+	    	  //storage growth problem. No thanks. 
+	    	  oldState.removeProperty(PREVIOUS_STATES);
+	    	  
+	    	  //update the current report state to match the new info we've just obtained
+	    	  //this updates the status, last updated, comments, and date received
+	    	  updateReportEntity(newReport,existingReportEntity);
+	    	  
+	    	  //store the previous state entity in a list of previous states.
+	    	  pushPreviousState(existingReportEntity,oldState);
+
+	    	  //finally, save the entity that we've just been manipulating.
+	    	  //it'll over-write the old one.
+		      datastore.put(existingReportEntity);
 	      }
 
-//	      existingReport.setProperty("vacationDays", 10);
-
-//	      datastore.put(existingReport);
 
 	  }  else {
 		    Entity newReportEntity = newReport.toEntity(newReport);
@@ -111,31 +142,22 @@ public class StoreReport extends HttpServlet {
 	  String newid = newReport.getReportid();
 
 	  Filter filter =
-	    new FilterPredicate("reportid",
+	    new FilterPredicate(REPORT_ID,
 	                        FilterOperator.EQUAL,
 	                        newid);
-	 // Key reportStoreKey = KeyFactory.createKey("gainsl", newReport.getOrgName());
-
-
-	  // Use class Query to assemble a query
-	  Query q = new Query("Report");//.setFilter(filter);
 	  
-	  Query betterQuery = new Query("Report").setFilter(filter);
+	  Query betterQuery = new Query(REPORT_ENTITY).setFilter(filter);
 
-	  // Use PreparedQuery interface to retrieve results
-	  PreparedQuery pq = datastore.prepare(q);
-	  
 	  PreparedQuery betterpq = datastore.prepare(betterQuery);
 
 	  final Logger log = Logger.getLogger(StoreReport.class.getName());    
-	  log.info("checked");
+	  log.info("checking to see if this is an update or not");
 	  log.info(newReport.toQueryParam());
 	  
-	  log.info("*************BETTER QUERY******************");
 	  for (Entity result : betterpq.asIterable(FetchOptions.Builder.withLimit(1))) {
-		  oldid = (String) result.getProperty("reportid");
-		  log.info("--" + oldid);
-		  
+		  log.info("*************BETTER QUERY******************");
+		  //compares report IDs.
+		  oldid = (String) result.getProperty(REPORT_ID);
 		  if(oldid.equals(newid)) {
 			  log.info("****************" + newid + "***********");
 		  }
@@ -143,18 +165,14 @@ public class StoreReport extends HttpServlet {
 		 return result; //what happens if there is more than one? Who knows. 
 	  }
 	  
-//	  log.info("=======NEW ID IS: " + newid + " =========");
-//	  for (Entity result : pq.asIterable(FetchOptions.Builder.withLimit(55))) {
-//		  oldid = (String) result.getProperty("reportid");
-//		  log.info("--" + oldid);
-//		  
-//		  if(oldid.equals(newid)) {
-//			  log.info("=========" + newid + "this is it!!========");
-//		  }
-//	  }
-	  
 	  return null;
   }
   
+  private void updateReportEntity(Report newReport, Entity oldEntity) {
+	  oldEntity.setProperty("status", newReport.getStatus());
+	  oldEntity.setProperty("lastUpdated", newReport.getLastUpdated());
+	  oldEntity.setProperty("dateReceived", newReport.getDateReceived());
+	  oldEntity.setProperty("content", newReport.getContent());
+  }
  
 }
