@@ -5,8 +5,15 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -24,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+
 
 public class StoreReport extends HttpServlet {
   @Override
@@ -58,16 +66,13 @@ public class StoreReport extends HttpServlet {
    */
   private void checkForExisting(Report newReport){
 	  final Logger log = Logger.getLogger(StoreReport.class.getName());    
-	  boolean isNewReport = false;
-	  
 	  DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	  Transaction txn = datastore.beginTransaction();
-	  try {
-		  Key reportKey = KeyFactory.createKey("gainsl", newReport.getReportid());
-	      Entity existingReportEntity = datastore.get(reportKey);
-	      
+
+	  
+	  Entity existingReportEntity = checkForEntity(newReport);
+	  
+	  if(existingReportEntity != null) {
 	      //this is an update to a report. We need to check if it's appropriate to over-write.
-	      
 	      Date existingLastUpdated = (Date) existingReportEntity.getProperty("lastUpdated");
 	      Date newLastUpdated = (Date) newReport.getLastUpdated();
 	      if (existingLastUpdated.after(newLastUpdated)) {
@@ -86,28 +91,70 @@ public class StoreReport extends HttpServlet {
 	    	  //and then overwrite the existing state with the values we just received.
 	    	  log.info("We've received a report that is an update. Updating now.//TODO");
 	    	  //TODO: Push to report.previousStates;
-
-	    	}
+	      }
 
 //	      existingReport.setProperty("vacationDays", 10);
 
 //	      datastore.put(existingReport);
 
-	      txn.commit();
-	  } catch (EntityNotFoundException e) {
-		  log.info("Entity not found");
-		  isNewReport = true;
-		  e.printStackTrace();
-	  } finally {
-		  if (txn.isActive()) {
-			  txn.rollback();
-		  }
-	  }
-	  if(isNewReport) {
+	  }  else {
 		    Entity newReportEntity = newReport.toEntity(newReport);
 	    	datastore.put(newReportEntity);
 	  }
 
   }
+  
+  public Entity checkForEntity(Report newReport) {
+	  
+	  DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+	  String oldid;
+	  String newid = newReport.getReportid();
+
+	  Filter filter =
+	    new FilterPredicate("reportid",
+	                        FilterOperator.EQUAL,
+	                        newid);
+	 // Key reportStoreKey = KeyFactory.createKey("gainsl", newReport.getOrgName());
+
+
+	  // Use class Query to assemble a query
+	  Query q = new Query("Report");//.setFilter(filter);
+	  
+	  Query betterQuery = new Query("Report").setFilter(filter);
+
+	  // Use PreparedQuery interface to retrieve results
+	  PreparedQuery pq = datastore.prepare(q);
+	  
+	  PreparedQuery betterpq = datastore.prepare(betterQuery);
+
+	  final Logger log = Logger.getLogger(StoreReport.class.getName());    
+	  log.info("checked");
+	  log.info(newReport.toQueryParam());
+	  
+	  log.info("*************BETTER QUERY******************");
+	  for (Entity result : betterpq.asIterable(FetchOptions.Builder.withLimit(1))) {
+		  oldid = (String) result.getProperty("reportid");
+		  log.info("--" + oldid);
+		  
+		  if(oldid.equals(newid)) {
+			  log.info("****************" + newid + "***********");
+		  }
+		  
+		 return result; //what happens if there is more than one? Who knows. 
+	  }
+	  
+//	  log.info("=======NEW ID IS: " + newid + " =========");
+//	  for (Entity result : pq.asIterable(FetchOptions.Builder.withLimit(55))) {
+//		  oldid = (String) result.getProperty("reportid");
+//		  log.info("--" + oldid);
+//		  
+//		  if(oldid.equals(newid)) {
+//			  log.info("=========" + newid + "this is it!!========");
+//		  }
+//	  }
+	  
+	  return null;
+  }
+  
  
 }

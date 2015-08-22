@@ -99,6 +99,7 @@ public class Report {
 	    public String toQueryParam() {
 	        StringBuilder sb = new StringBuilder();
 	        sb.append("orgName=" + orgName);
+	        sb.append("reportid=" + reportid);
 	        sb.append("&content=" + content);
 	        sb.append("&latitude=" + latitude);
 	        sb.append("&longitude=" + longitude);
