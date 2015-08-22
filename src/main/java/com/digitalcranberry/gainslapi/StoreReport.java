@@ -95,43 +95,41 @@ public class StoreReport extends HttpServlet {
 	    	  //the report we've just received, so we want to
 	    	  //store the report we've just received as a previous state, and -not-
 	    	  //overwrite anything.
-	    		
-	    	  //TODO: Push to report.previousStates;
 	    	  log.info("We've received a report, but there's a newer one than this" +
 	    			  "in the Datastore already. Archiving the report we just received.");
+	    	  oldState.setPropertiesFrom(newReport.toEntity());
 	    	  
-	      } else {
-	    	  //this means that the report we're just received is newer than the
-	    	  //current report state. We'll save the existing state in the previous state list
-	    	  //and then overwrite the existing state with the values we just received.
-	    	  log.info("We've received a report that is an update. Updating report state now.");
+	      	} else {
+      			//this means that the report we're just received is newer than the
+	      		//current report state. We'll save the existing state in the previous state list
+	      		//and then overwrite the existing state with the values we just received.
+	      		log.info("We've received a report that is an update. Updating report state now.");
 	    	  
-	    	  //create set previous state entity properties from current state.
-	    	  //this is a shallow value copy, not a reference to the existing entity
-	    	  oldState.setPropertiesFrom(existingReportEntity);
+	      		//create set previous state entity properties from current state.
+	      		//this is a shallow value copy, not a reference to the existing entity
+	      		oldState.setPropertiesFrom(existingReportEntity);
 	    	  
-	    	  //remove this property before we store it, because otherwise each 
-	    	  //consecutive update contains all previous states. This would be an exponential
-	    	  //storage growth problem. No thanks. 
-	    	  oldState.removeProperty(PREVIOUS_STATES);
+	      		//remove this property before we store it, because otherwise each 
+	      		//consecutive update contains all previous states. This would be an exponential
+	      		//storage growth problem. No thanks. 
+	      		oldState.removeProperty(PREVIOUS_STATES);
 	    	  
-	    	  //update the current report state to match the new info we've just obtained
-	    	  //this updates the status, last updated, comments, and date received
-	    	  updateReportEntity(newReport,existingReportEntity);
+	      		//update the current report state to match the new info we've just obtained
+	      		//this updates the status, last updated, comments, and date received
+	      		updateReportEntity(newReport,existingReportEntity);
 	    	  
-	    	  //store the previous state entity in a list of previous states.
-	    	  pushPreviousState(existingReportEntity,oldState);
+	      		//store the previous state entity in a list of previous states.
+	      		pushPreviousState(existingReportEntity,oldState);
 
-	    	  //finally, save the entity that we've just been manipulating.
-	    	  //it'll over-write the old one.
-		      datastore.put(existingReportEntity);
-	      }
-
-
-	  }  else {
-		    Entity newReportEntity = newReport.toEntity(newReport);
-	    	datastore.put(newReportEntity);
-	  }
+	    	  	//finally, save the entity that we've just been manipulating.
+	    	  	//it'll over-write the old one.
+	    	  	datastore.put(existingReportEntity);
+	      	}
+	  	}  else {
+		  //this is a brand new report.
+	  		Entity newReportEntity = newReport.toEntity();
+	  		datastore.put(newReportEntity);
+	  	}
 
   }
   

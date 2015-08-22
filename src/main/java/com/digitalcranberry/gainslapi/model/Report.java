@@ -156,9 +156,9 @@ public class Report {
 			  this.setLastUpdated(lastUpdated);	
 		  }
 
-		  public Entity toEntity(Report report){  
+		  public Entity toEntity(){  
 			//set report ID to match the ID sent by the user.
-			Key reportStoreKey = KeyFactory.createKey("gainsl", report.getReportid());
+			Key reportStoreKey = KeyFactory.createKey("gainsl", getReportid());
 			    
 			Entity reportEntity = new Entity(REPORT_ENTITY, reportStoreKey);
 
@@ -176,15 +176,15 @@ public class Report {
 
 		    Date date = new Date();
 
-		    reportEntity.setProperty("latitude", report.getLatitude());
-		    reportEntity.setProperty("orgName", report.getOrgName());
-		    reportEntity.setProperty("longitude", report.getLongitude());
-		    reportEntity.setProperty("content", report.getContent());
-		    reportEntity.setProperty("reportid", report.getReportid());
-		    reportEntity.setProperty("dateCreated", report.getDateCreated());
-		    reportEntity.setProperty("lastUpdated", report.getLastUpdated());
+		    reportEntity.setProperty("latitude", getLatitude());
+		    reportEntity.setProperty("orgName", getOrgName());
+		    reportEntity.setProperty("longitude", getLongitude());
+		    reportEntity.setProperty("content", getContent());
+		    reportEntity.setProperty("reportid", getReportid());
+		    reportEntity.setProperty("dateCreated", getDateCreated());
+		    reportEntity.setProperty("lastUpdated", getLastUpdated());
 		    reportEntity.setProperty("date", date);
-		    reportEntity.setProperty("status", report.getStatus());
+		    reportEntity.setProperty("status", getStatus());
 		    reportEntity.setProperty("previousStates", new ArrayList<EmbeddedEntity>());
 		    
 		    return reportEntity;
