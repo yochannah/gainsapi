@@ -108,12 +108,7 @@ public class StoreReport extends HttpServlet {
 	      		//create set previous state entity properties from current state.
 	      		//this is a shallow value copy, not a reference to the existing entity
 	      		oldState.setPropertiesFrom(existingReportEntity);
-	    	  
-	      		//remove this property before we store it, because otherwise each 
-	      		//consecutive update contains all previous states. This would be an exponential
-	      		//storage growth problem. No thanks. 
-	      		oldState.removeProperty(PREVIOUS_STATES);
-	    	  
+	    	  	      		
 	      		//update the current report state to match the new info we've just obtained
 	      		//this updates the status, last updated, comments, and date received
 	      		updateReportEntity(newReport,existingReportEntity);
@@ -153,12 +148,23 @@ public class StoreReport extends HttpServlet {
 	  log.info(newReport.toQueryParam());
 	  
 	  for (Entity result : betterpq.asIterable(FetchOptions.Builder.withLimit(1))) {
-		  log.info("*************BETTER QUERY******************");
 		  //compares report IDs.
 		  oldid = (String) result.getProperty(REPORT_ID);
 		  if(oldid.equals(newid)) {
 			  log.info("****************" + newid + "***********");
 		  }
+		  
+    		//remove this property before we store it, because otherwise each 
+    		//consecutive update contains all previous states. This would be an exponential
+    		//storage growth problem. No thanks. 
+    		result.removeProperty(PREVIOUS_STATES);
+    		
+    		//these properties stay the same every time. No point storing multiple times.
+    		result.removeProperty("dateCreated");
+    		result.removeProperty("latitude");
+    		result.removeProperty("longitude");
+    		result.removeProperty("date");
+    		result.removeProperty("orgName");
 		  
 		 return result; //what happens if there is more than one? Who knows. 
 	  }

@@ -3,6 +3,7 @@
 <datastore-indexes>
 
     <datastore-index kind="Report" ancestor="true" source="manual">
+        <property name="status" direction="asc"/>
         <property name="lastUpdated" direction="desc"/>
     </datastore-index>
 

@@ -3,6 +3,7 @@ package com.digitalcranberry.gainslapi;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,13 +38,14 @@ public class ReportList extends HttpServlet{
 
 		    public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		            throws IOException {
+		  	  final Logger log = Logger.getLogger(ReportList.class.getName());    
 
 
 		    	String orgName = req.getParameter("orgName");
 		    	String resultsNum = req.getParameter("resultNum");
 		    	String status = req.getParameter("status");
 		    	int limit;
-		    	
+
 		    	reportStoreKey = KeyFactory.createKey("gainsl", orgName);
 		        query = new Query("Report", reportStoreKey).addSort("lastUpdated", Query.SortDirection.DESCENDING);		        
 
@@ -56,6 +58,7 @@ public class ReportList extends HttpServlet{
 		    	}
 		    	
 		    	if(status != null) {
+		    		log.info("status: " + status);
 		    		filter = new FilterPredicate("status", FilterOperator.EQUAL, status);
 		    		query.setFilter(filter);
 		    	}
