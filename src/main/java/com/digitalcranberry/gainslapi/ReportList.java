@@ -16,6 +16,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -35,26 +38,44 @@ public class ReportList extends HttpServlet{
 		    public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		            throws IOException {
 
+
 		    	String orgName = req.getParameter("orgName");
 		    	String resultsNum = req.getParameter("resultNum");
+		    	String status = req.getParameter("status");
 		    	int limit;
+		    	
+		    	reportStoreKey = KeyFactory.createKey("gainsl", orgName);
+		        query = new Query("Report", reportStoreKey).addSort("lastUpdated", Query.SortDirection.DESCENDING);		        
+
+		        Filter filter;
 		    	
 		    	if(resultsNum != null) {
 		    		limit = Integer.parseInt(resultsNum);
 		    	} else {
-		    		limit = 15;
+		    		limit = 35;
 		    	}
 		    	
-		    	reportStoreKey = KeyFactory.createKey("gainsl", orgName);
-		        query = new Query("Report", reportStoreKey).addSort("date", Query.SortDirection.DESCENDING);		        
+		    	if(status != null) {
+		    		filter = new FilterPredicate("status", FilterOperator.EQUAL, status);
+		    		query.setFilter(filter);
+		    	}
+		    			    	
 		        reports  = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 
+		        //the phone only stores current and unsent snapshots. no need to send all old states. 
+		    	//saves loads of data transfer this way, too.
+		        for(Entity rep : reports) {
+		        	rep.removeProperty("previousStates");
+		        }
+		        
+		        //convert it to Json
 		        Gson gson = new GsonBuilder()
 		        .setExclusionStrategies(new TestExclStrat())
 		        .create();
 		        
 		        String reportString = gson.toJson(reports); 
 		        
+		        //send it to the user
 		        resp.setStatus(HttpServletResponse.SC_OK);
 		        resp.setContentType("text/json");
 
