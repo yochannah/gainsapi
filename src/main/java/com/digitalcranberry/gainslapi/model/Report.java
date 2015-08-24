@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import com.digitalcranberry.gainslapi.StoreReport;
+
 import static com.digitalcranberry.gainslapi.Constants.*;
+
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
@@ -31,6 +33,9 @@ public class Report {
 	    private Double longitude;
 	    private String image;
 	    private String reporter;
+	    private String assignee;
+	    private String lastUpdatedBy;
+	    private String orgName;
 	    
 	    public String getImage() {
 	        return image;
@@ -48,7 +53,7 @@ public class Report {
 	        this.orgName = orgName;
 	    }
 
-	    private String orgName;
+
 
 	    public Double getLatitude() {
 	        return latitude;
@@ -92,16 +97,19 @@ public class Report {
 	    }
 
 	    public Date getDateCreated() {
-	        return date;
+	        return dateCaptured;
 	    }
 
 	    public void setDateCreated(Date date) {
-	        this.date = date;
+	        this.dateCaptured = date;
 	    }
 
 	    public String toQueryParam() {
 	        StringBuilder sb = new StringBuilder();
 	        sb.append("orgName=" + orgName);
+	        sb.append("lastUpdatedBy=" + lastUpdatedBy);
+	        sb.append("reporter=" + reporter);
+	        sb.append("assignee=" + assignee);
 	        sb.append("reportid=" + reportid);
 	        sb.append("&content=" + content);
 	        sb.append("&latitude=" + latitude);
@@ -128,6 +136,10 @@ public class Report {
 		public Date getLastUpdated() {
 			return lastUpdated;
 		}
+		
+		public void setReporter(String reporter){
+			this.reporter = reporter;
+		}
 
 		public void setLastUpdated(Date lastUpdated) {
 			this.lastUpdated = lastUpdated;
@@ -141,6 +153,9 @@ public class Report {
 			  this.setLongitude(Double.parseDouble(req.getParameter("longitude")));
 			  this.setOrgName(propertyOrDefault(req, "orgName", "OU"));
 			  this.setStatus(propertyOrDefault(req, "status", "new"));
+			  this.setReporter(req.getParameter("reporter"));
+			  this.setAssignee(req.getParameter("assignee"));
+			  this.setLastUpdatedBy(req.getParameter("lastUpdatedBy"));
 			  
 			  //the dates need to be parsed: 
 			  String dateFirstCapturedStr = req.getParameter("dateFirstCaptured");
@@ -154,6 +169,14 @@ public class Report {
 			  this.setDateCreated(dateFirstCaptured);
 			  this.setDateReceived(dateReceived);
 			  this.setLastUpdated(lastUpdated);	
+		  }
+
+		  private void setLastUpdatedBy(String lastUpdatedBy) {
+			  this.lastUpdatedBy = lastUpdatedBy;
+		  }
+
+		  private void setAssignee(String assignee) {
+			  this.assignee = assignee;
 		  }
 
 		  public Entity toEntity(){  
@@ -181,8 +204,11 @@ public class Report {
 		    reportEntity.setProperty("longitude", getLongitude());
 		    reportEntity.setProperty("content", getContent());
 		    reportEntity.setProperty("reportid", getReportid());
+		    reportEntity.setProperty("reporter", getReporter());
+		    reportEntity.setProperty("assignee", getAssignee());
 		    reportEntity.setProperty("dateCreated", getDateCreated());
 		    reportEntity.setProperty("lastUpdated", getLastUpdated());
+		    reportEntity.setProperty("lastUpdatedBy", getLastUpdatedBy());
 		    reportEntity.setProperty("date", date);
 		    reportEntity.setProperty("status", getStatus());
 		    reportEntity.setProperty("previousStates", new ArrayList<EmbeddedEntity>());
@@ -190,6 +216,14 @@ public class Report {
 		    return reportEntity;
 		  }
 		  
+		  private String getAssignee() {
+			  return assignee;
+		  }
+
+		  private String getReporter() {
+			return reporter;
+		  }
+
 		  private String propertyOrDefault(HttpServletRequest req, String propName, String defaultValue) {
 			  String value = req.getParameter(propName);
 			  if (value == null) {
@@ -201,5 +235,9 @@ public class Report {
 		  private Date dateFromString(String dateString){
 			 return new Date(Long.parseLong(dateString));
 		  }
+
+		public String getLastUpdatedBy() {
+			return this.lastUpdatedBy;
+		}
 
 }
