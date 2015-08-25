@@ -28,5 +28,10 @@ gainsl.map = {
         //zoom to fit bounds
         var mGroup = new L.featureGroup(self.markers);
         self.theMap.fitBounds(mGroup.getBounds().pad(0.5));        
+    },
+    clear : function () {
+    	for (var i=0; i < this.markers.length; i++) {
+    		this.theMap.removeLayer(this.markers[i]);
+    	}
     }
 };

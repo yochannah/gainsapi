@@ -17,15 +17,42 @@
 
 <body>
 
+<div id="filters">
+	<div class="filter">
+		<div>Filter by Status </div>
+		<ul id="status">
+			<li>New</li>
+			<li>In Progress</li>
+			<li>Resolved</li>
+		</ul>
+	</div>
+	<div class="filter">
+		<div>Filter by reporter</div>
+		<ul id="reporter">
+			<li>Alice</li>
+			<li>Bob</li>
+			<li>Eve</li>
+		</ul>
+	</div>
+	<div class="filter">
+	<div>Filter by last&nbsp;updater</div>
+		<ul id="lastUpdatedBy">
+			<li>Alice</li>
+			<li>Bob</li>
+			<li>Eve</li>
+		</ul>
+	</div>
+</div>
+
 <div id="map"></div>
 
 <table>
     <thead>
         <th>Status</th>
-        <th>Image</th>        
+        <th>Date Reported</th>
         <th>Details</th>
-        <th>Author</th>
-        <th>Date</th>
+        <th>Last Update</th>
+        <th></th>        
     </thead>
     <tbody id="reports">
         <tr><td colspan="4">
@@ -51,10 +78,10 @@ $('document').ready(function () {
 <script type="text/template" id="reportTemplate">
 <tr>
 <td class="status status-{{status}}">{{status}}</td>
-<td>{{image}}</td>
+<td class="date">{{dateCreated}} by {{reporter}}</td>
 <td>{{content}}</td>
-<td>{{author}}</td>
-<td class="date">{{date}}</td>
+<td>{{lastUpdated}} by {{lastUpdatedBy}}</td>
+<td>{{image}}</td>
 </tr>
 </script>
 
