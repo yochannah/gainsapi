@@ -152,9 +152,12 @@ public class Report {
 			  this.setLatitude(Double.parseDouble(req.getParameter("latitude")));
 			  this.setLongitude(Double.parseDouble(req.getParameter("longitude")));
 			  this.setOrgName(propertyOrDefault(req, "orgName", "OU"));
-			  this.setStatus(propertyOrDefault(req, "status", "new"));
+			  this.setStatus(propertyOrDefault(req, "status", "New"));
 			  this.setReporter(req.getParameter("reporter"));
 			  this.setAssignee(req.getParameter("assignee"));
+			  if(!req.getParameter("assignee").equals("null")) {
+				  this.setAssignee(req.getParameter("assignee"));				  
+			  }
 			  this.setLastUpdatedBy(req.getParameter("lastUpdatedBy"));
 			  
 			  //the dates need to be parsed: 
@@ -178,7 +181,7 @@ public class Report {
 		  private void setAssignee(String assignee) {
 			  this.assignee = assignee;
 		  }
-
+		  
 		  public Entity toEntity(){  
 			//set report ID to match the ID sent by the user.
 			Key reportStoreKey = KeyFactory.createKey("gainsl", getReportid());
@@ -226,7 +229,7 @@ public class Report {
 
 		  private String propertyOrDefault(HttpServletRequest req, String propName, String defaultValue) {
 			  String value = req.getParameter(propName);
-			  if (value == null) {
+			  if ((value == null) || value.equals("null")) {
 				  value = defaultValue;
 			  }
 			  return value;

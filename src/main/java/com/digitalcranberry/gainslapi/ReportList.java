@@ -44,12 +44,12 @@ public class ReportList extends HttpServlet{
 		    	String orgName = req.getParameter("orgName");
 		    	String resultsNum = req.getParameter("resultNum");
 		    	String status = req.getParameter("status");
+		    	String reporter = req.getParameter("reporter");
+		    	String lastUpdatedBy = req.getParameter("lastUpdatedBy");
 		    	int limit;
 
-		    	reportStoreKey = KeyFactory.createKey("gainsl", orgName);
-		        query = new Query("Report", reportStoreKey).addSort("lastUpdated", Query.SortDirection.DESCENDING);		        
-
-		        Filter filter;
+		  //  	reportStoreKey = KeyFactory.createKey("gainsl", orgName);
+		        query = new Query("Report").addSort("lastUpdated", Query.SortDirection.DESCENDING);		        
 		    	
 		    	if(resultsNum != null) {
 		    		limit = Integer.parseInt(resultsNum);
@@ -59,16 +59,29 @@ public class ReportList extends HttpServlet{
 		    	
 		    	if(status != null) {
 		    		log.info("status: " + status);
-		    		filter = new FilterPredicate("status", FilterOperator.EQUAL, status);
-		    		query.setFilter(filter);
+		    		Filter sfilter = new FilterPredicate("status", FilterOperator.EQUAL, status);
+		    		query.setFilter(sfilter);
 		    	}
-		    			    	
+
+		    	if(reporter != null) {
+		    		log.info("reporter: " + reporter);
+		    		Filter rfilter = new FilterPredicate("reporter", FilterOperator.EQUAL, reporter);
+		    		query.setFilter(rfilter);
+		    	}
+
+		    	if(lastUpdatedBy != null) {
+		    		log.info("lastUpdatedBy: " + lastUpdatedBy);
+		    		Filter lfilter = new FilterPredicate("lastUpdatedBy", FilterOperator.EQUAL, lastUpdatedBy);
+		    		query.setFilter(lfilter);
+		    	}
+
+		    	
 		        reports  = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 
 		        //the phone only stores current and unsent snapshots. no need to send all old states. 
 		    	//saves loads of data transfer this way, too.
 		        for(Entity rep : reports) {
-		        	rep.removeProperty("previousStates");
+		        //	rep.removeProperty("previousStates");
 		        }
 		        
 		        //convert it to Json

@@ -1,9 +1,27 @@
-<!-- Indices written at Sun, 23 Aug 2015 21:51:11 BST -->
+<!-- Indices written at Tue, 25 Aug 2015 12:02:03 BST -->
 
 <datastore-indexes>
 
-    <datastore-index kind="Report" ancestor="true" source="manual">
+    <!-- Used 4 times in query history -->
+    <datastore-index kind="Report" ancestor="false" source="manual">
         <property name="status" direction="asc"/>
+        <property name="lastUpdated" direction="desc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="Report" ancestor="false" source="manual">
+        <property name="reporter" direction="asc"/>
+        <property name="lastUpdated" direction="desc"/>
+    </datastore-index>
+
+
+    <datastore-index kind="Report" ancestor="false" source="manual">
+        <property name="assignee" direction="asc"/>
+        <property name="lastUpdated" direction="desc"/>
+    </datastore-index>
+
+    <datastore-index kind="Report" ancestor="false" source="manual">
+        <property name="lastUpdatedBy" direction="asc"/>
         <property name="lastUpdated" direction="desc"/>
     </datastore-index>
 
